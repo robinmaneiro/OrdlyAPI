@@ -1,0 +1,10 @@
+package com.robinmaneiro.order_kiosk_backend.database.model
+
+import org.bson.types.ObjectId
+import org.springframework.data.annotation.Id
+
+data class User(
+    @Id val id: ObjectId = ObjectId(),
+    val email: String,
+    val hashedPassword: String,
+)
