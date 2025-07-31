@@ -10,11 +10,11 @@ import java.util.Date
 
 @Service
 class JwtService(
-    @Value("JWT_SECRET_BASE64") private val jwtSecret: String
+    @Value("\${jwt.secret}") private val jwtSecret: String
 ) {
     private val secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret))
     private val accessTokenValidityMs = 15L * 60 * 1000L // 15 minutes
-    private val refreshTokenValidityMs = 30L * 24 * 60 * 60 * 1000L // 30 days
+    val refreshTokenValidityMs = 30L * 24 * 60 * 60 * 1000L // 30 days
 
     private fun generateToken(
         userId: String,
@@ -52,7 +52,7 @@ class JwtService(
         return tokenType == "refresh"
     }
 
-    fun getUserIdFromToken(token: String): String? {
+    fun getUserIdFromToken(token: String): String {
         val claims = parseAllClaims(token) ?: throw IllegalArgumentException("Invalid token.")
         return claims.subject
     }
