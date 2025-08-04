@@ -5,6 +5,7 @@ import com.robinmaneiro.order_kiosk_backend.database.model.User
 import com.robinmaneiro.order_kiosk_backend.database.repository.RefreshTokenRepository
 import com.robinmaneiro.order_kiosk_backend.database.repository.UserRepository
 import org.bson.types.ObjectId
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
@@ -28,6 +29,10 @@ class AuthService(
     )
 
     fun register(email: String, password: String): User {
+        val user = userRepository.findByEmail(email.trim())
+        if (user != null) {
+            throw ResponseStatusException(HttpStatus.CONFLICT, "A user with this email already exists")
+        }
         return userRepository.save(
             User(
                 email = email,
