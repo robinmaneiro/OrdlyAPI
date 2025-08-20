@@ -9,5 +9,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class MenuItem(
     @Id val id: ObjectId = ObjectId.get(),
     val title: String,
+    val description: String,
     val price: Double,
 )

@@ -12,7 +12,9 @@ class MenuController(
     private val menuRepository: MenuRepository
 ) {
     data class MenuItemsResponse(
+        val id: String,
         val title: String,
+        val description: String,
         val price: Double
     )
 
@@ -20,7 +22,9 @@ class MenuController(
     fun getAllMenuItems(): List<MenuItemsResponse> {
         return menuRepository.findAll().map {
             MenuItemsResponse(
+                id = it.id.toHexString(),
                 title = it.title,
+                description = it.description,
                 price = it.price
             )
         }
