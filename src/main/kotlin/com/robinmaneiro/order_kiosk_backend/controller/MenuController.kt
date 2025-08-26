@@ -29,7 +29,7 @@ class MenuController(
     )
 
     data class MenuCategoryResponse(
-        val categoryId: String,
+        val id: String,
         val categoryName: String
     )
 
@@ -37,7 +37,7 @@ class MenuController(
     fun getAllMenuCategories(): List<MenuCategoryResponse> {
         return menuCategoriesRepository.findAll().map {
             MenuCategoryResponse(
-                categoryId = it.categoryId.toHexString(),
+                id = it.id.toHexString(),
                 categoryName = it.categoryName
             )
         }
@@ -59,9 +59,9 @@ class MenuController(
         )
     }
 
-    @GetMapping("/items/{id}")
-    fun getMenuItem(@PathVariable id: String): MenuSingleItemResponse? {
-        return menuItemsRepository.findByIdOrNull(ObjectId(id))?.let {
+    @GetMapping("/items/{itemId}")
+    fun getMenuItem(@PathVariable itemId: String): MenuSingleItemResponse? {
+        return menuItemsRepository.findByIdOrNull(id = ObjectId(itemId))?.let {
             MenuSingleItemResponse(
                 id = it.id.toHexString(),
                 title = it.title,

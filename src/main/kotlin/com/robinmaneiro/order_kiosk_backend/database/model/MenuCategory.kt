@@ -6,6 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("categories")
 data class MenuCategory(
-    @Id val categoryId: ObjectId = ObjectId.get(), //TODO: Study the effects of not setting a default
+    @Id val id: ObjectId = ObjectId.get(),
     val categoryName: String
 )
