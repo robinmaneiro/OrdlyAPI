@@ -44,16 +44,19 @@ class MenuController(
     }
 
     @GetMapping("/categories/{categoryId}")
-    fun getItemsByCategory(@PathVariable categoryId: String): List<MenuSingleItemResponse> {
-        return menuItemsRepository.findAll().filter { categoryId in it.categories }.map {
-            MenuSingleItemResponse(
-                id = it.id.toHexString(),
-                title = it.title,
-                description = it.description,
-                price = it.price,
-                categories = it.categories
-            )
-        }
+    fun getItemsByCategory(@PathVariable categoryId: String): MenuItemsResponse {
+        return MenuItemsResponse(
+            itemCount = menuItemsRepository.findAll().count { categoryId in it.categories },
+            items = menuItemsRepository.findAll().filter { categoryId in it.categories }.map {
+                MenuSingleItemResponse(
+                    id = it.id.toHexString(),
+                    title = it.title,
+                    description = it.description,
+                    price = it.price,
+                    categories = it.categories
+                )
+            }
+        )
     }
 
     @GetMapping("/items/all")
