@@ -7,5 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 @Document("categories")
 data class MenuCategory(
     @Id val id: ObjectId = ObjectId.get(),
-    val categoryName: String
+    val categoryName: String,
+    val isDefault: Boolean = false
 )

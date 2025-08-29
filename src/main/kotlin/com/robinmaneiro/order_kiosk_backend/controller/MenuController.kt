@@ -30,7 +30,8 @@ class MenuController(
 
     data class MenuCategoryResponse(
         val id: String,
-        val categoryName: String
+        val categoryName: String,
+        val isSelected: Boolean
     )
 
     @GetMapping("/categories")
@@ -38,7 +39,8 @@ class MenuController(
         return menuCategoriesRepository.findAll().map {
             MenuCategoryResponse(
                 id = it.id.toHexString(),
-                categoryName = it.categoryName
+                categoryName = it.categoryName,
+                isSelected = it.isDefault
             )
         }
     }
