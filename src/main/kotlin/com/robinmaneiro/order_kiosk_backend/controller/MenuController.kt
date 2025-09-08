@@ -1,7 +1,7 @@
 package com.robinmaneiro.order_kiosk_backend.controller
 
 import com.robinmaneiro.order_kiosk_backend.database.repository.MenuCategoriesRepository
-import com.robinmaneiro.order_kiosk_backend.database.repository.MenuItemsRepository
+import com.robinmaneiro.order_kiosk_backend.database.repository.MenuProductsRepository
 import org.bson.types.ObjectId
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/menu")
 class MenuController(
-    private val menuItemsRepository: MenuItemsRepository,
+    private val menuProductsRepository: MenuProductsRepository,
     private val menuCategoriesRepository: MenuCategoriesRepository
 ) {
     data class MenuItemsResponse(
@@ -48,8 +48,8 @@ class MenuController(
     @GetMapping("/categories/{categoryId}")
     fun getItemsByCategory(@PathVariable categoryId: String): MenuItemsResponse {
         return MenuItemsResponse(
-            itemCount = menuItemsRepository.findAll().count { categoryId in it.categories },
-            items = menuItemsRepository.findAll().filter { categoryId in it.categories }.map {
+            itemCount = menuProductsRepository.findAll().count { categoryId in it.categories },
+            items = menuProductsRepository.findAll().filter { categoryId in it.categories }.map {
                 MenuSingleItemResponse(
                     id = it.id.toHexString(),
                     title = it.title,
@@ -64,8 +64,8 @@ class MenuController(
     @GetMapping("/items/all")
     fun getAllMenuItems(): MenuItemsResponse {
         return MenuItemsResponse(
-            itemCount = menuItemsRepository.findAll().count(),
-            items = menuItemsRepository.findAll().map {
+            itemCount = menuProductsRepository.findAll().count(),
+            items = menuProductsRepository.findAll().map {
                 MenuSingleItemResponse(
                     id = it.id.toHexString(),
                     title = it.title,
@@ -79,7 +79,7 @@ class MenuController(
 
     @GetMapping("/items/{itemId}")
     fun getMenuItem(@PathVariable itemId: String): MenuSingleItemResponse? {
-        return menuItemsRepository.findByIdOrNull(id = ObjectId(itemId))?.let {
+        return menuProductsRepository.findByIdOrNull(id = ObjectId(itemId))?.let {
             MenuSingleItemResponse(
                 id = it.id.toHexString(),
                 title = it.title,

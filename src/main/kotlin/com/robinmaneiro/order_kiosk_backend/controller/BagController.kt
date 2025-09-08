@@ -2,7 +2,7 @@ package com.robinmaneiro.order_kiosk_backend.controller
 
 import com.robinmaneiro.order_kiosk_backend.database.model.BagItem
 import com.robinmaneiro.order_kiosk_backend.database.repository.BagRepository
-import com.robinmaneiro.order_kiosk_backend.database.repository.MenuItemsRepository
+import com.robinmaneiro.order_kiosk_backend.database.repository.MenuProductsRepository
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
@@ -18,7 +18,7 @@ import kotlin.jvm.optionals.getOrNull
 @RestController
 @RequestMapping("/bag")
 class BagController(
-    private val menuItemsRepository: MenuItemsRepository,
+    private val menuProductsRepository: MenuProductsRepository,
     private val bagRepository: BagRepository
 ) {
     data class AddToBagRequest(
@@ -27,7 +27,6 @@ class BagController(
     )
 
     data class ErrorResponse(val status: Int, val error: String)
-
 
     @PostMapping("/add")
     fun addItemToBag(
@@ -39,10 +38,9 @@ class BagController(
                 .body(ErrorResponse(400, "Invalid product id"))
         }
 
-
         val product = try {
-            menuItemsRepository.findById(ObjectId(body.id)).orElse(null)
-        } catch (ex: Exception) {
+            menuProductsRepository.findByItemId(body.id).getOrNull()
+        } catch (_: Exception) {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse(500, "Error fetching product"))
@@ -54,15 +52,20 @@ class BagController(
                 .body(ErrorResponse(404, "Product not found"))
         }
 
+
+
         val bagItem = BagItem(
             productId = body.id,
-            quantity = body.quantity
+            quantity = body.quantity,
+            title = product.title,
+            description = product.description,
+            price = product.price
         )
 
         return try {
             val saved = bagRepository.save(bagItem)
             ResponseEntity.status(HttpStatus.CREATED).body(saved)
-        } catch (ex: Exception) {
+        } catch (_: Exception) {
             ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse(500, "Failed to save bag item"))

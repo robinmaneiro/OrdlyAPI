@@ -5,8 +5,9 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("products")
-data class MenuItem(
+data class MenuProduct(
     @Id val id: ObjectId = ObjectId.get(),
+    val itemId: String,
     val title: String,
     val description: String,
     val price: Double,

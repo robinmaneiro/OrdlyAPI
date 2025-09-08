@@ -8,5 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class BagItem(
     @Id val id: ObjectId = ObjectId.get(),
     val productId: String,
-    val quantity: Int
-)
+    val quantity: Int,
+    val title: String,
+    val description: String,
+    val price: Double,
+    )
