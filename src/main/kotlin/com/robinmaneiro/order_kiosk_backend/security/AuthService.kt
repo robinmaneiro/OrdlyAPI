@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatusCode
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.server.ResponseStatusException
 import java.security.MessageDigest
 import java.time.Instant

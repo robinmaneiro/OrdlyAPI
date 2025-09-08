@@ -4,11 +4,9 @@ import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document("products")
-data class MenuItem(
+@Document("bag_items")
+data class BagItem(
     @Id val id: ObjectId = ObjectId.get(),
-    val title: String,
-    val description: String,
-    val price: Double,
-    val categories: List<String>
+    val productId: String,
+    val quantity: Int
 )

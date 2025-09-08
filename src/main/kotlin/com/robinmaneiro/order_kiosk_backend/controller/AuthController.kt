@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping(value = ["/auth"])
+@RequestMapping("/auth")
 class AuthController(
     private val authService: AuthService
 ) {
@@ -28,21 +28,21 @@ class AuthController(
         val refreshToken: String
     )
 
-    @PostMapping(value = ["/register"])
+    @PostMapping("/register")
     fun register(
         @Valid @RequestBody body: AuthRequest
     ) {
         authService.register(body.email, body.password)
     }
 
-    @PostMapping(value = ["/login"])
+    @PostMapping("/login")
     fun login(
         @RequestBody body: AuthRequest
     ): AuthService.TokenPair {
         return authService.login(body.email, body.password)
     }
 
-    @PostMapping(value = ["/refresh"])
+    @PostMapping("/refresh")
     fun refresh(
         @RequestBody refreshBody: RefreshRequest
     ): AuthService.TokenPair {
