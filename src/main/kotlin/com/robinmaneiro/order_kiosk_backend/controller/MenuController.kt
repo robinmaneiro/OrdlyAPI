@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import kotlin.jvm.optionals.getOrNull
 
 @RestController
 @RequestMapping("/menu")
@@ -51,7 +52,7 @@ class MenuController(
             itemCount = menuProductsRepository.findAll().count { categoryId in it.categories },
             items = menuProductsRepository.findAll().filter { categoryId in it.categories }.map {
                 MenuSingleItemResponse(
-                    id = it.id.toHexString(),
+                    id = it.itemId,
                     title = it.title,
                     description = it.description,
                     price = it.price,
@@ -79,9 +80,9 @@ class MenuController(
 
     @GetMapping("/items/{itemId}")
     fun getMenuItem(@PathVariable itemId: String): MenuSingleItemResponse? {
-        return menuProductsRepository.findByIdOrNull(id = ObjectId(itemId))?.let {
+        return menuProductsRepository.findByItemId(itemId).getOrNull()?.let {
             MenuSingleItemResponse(
-                id = it.id.toHexString(),
+                id = it.itemId,
                 title = it.title,
                 description = it.description,
                 price = it.price,
