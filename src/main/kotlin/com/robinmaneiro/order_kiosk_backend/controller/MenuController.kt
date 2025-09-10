@@ -2,8 +2,6 @@ package com.robinmaneiro.order_kiosk_backend.controller
 
 import com.robinmaneiro.order_kiosk_backend.database.repository.MenuCategoriesRepository
 import com.robinmaneiro.order_kiosk_backend.database.repository.MenuProductsRepository
-import org.bson.types.ObjectId
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping

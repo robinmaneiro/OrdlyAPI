@@ -9,6 +9,9 @@ import jakarta.validation.constraints.NotBlank
 import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController
 import kotlin.jvm.optionals.getOrNull
 
 @RestController
-@RequestMapping("/bag")
+@RequestMapping("/basket")
 class BagController(
     private val menuProductsRepository: MenuProductsRepository,
     private val bagRepository: BagRepository
 ) {
     data class AddToBagRequest(
-        @field:NotBlank val id: String,
+        @field:NotBlank val productId: String,
         @field:Min(1) val quantity: Int
     )
 
@@ -32,14 +35,14 @@ class BagController(
     fun addItemToBag(
         @Valid @RequestBody body: AddToBagRequest
     ): ResponseEntity<Any> {
-        if (!ObjectId.isValid(body.id)) {
+        if (!ObjectId.isValid(body.productId)) {
             return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse(400, "Invalid product id"))
         }
 
         val product = try {
-            menuProductsRepository.findByItemId(body.id).getOrNull()
+            menuProductsRepository.findByItemId(body.productId).getOrNull()
         } catch (_: Exception) {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -52,10 +55,8 @@ class BagController(
                 .body(ErrorResponse(404, "Product not found"))
         }
 
-
-
         val bagItem = BagItem(
-            productId = body.id,
+            productId = body.productId,
             quantity = body.quantity,
             title = product.title,
             description = product.description,
@@ -63,12 +64,28 @@ class BagController(
         )
 
         return try {
-            val saved = bagRepository.save(bagItem)
-            ResponseEntity.status(HttpStatus.CREATED).body(saved)
+            bagRepository.save(bagItem)
+            val updatedProductList = bagRepository.findAll()
+            ResponseEntity.status(HttpStatus.CREATED).body(updatedProductList)
         } catch (_: Exception) {
             ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse(500, "Failed to save bag item"))
         }
+    }
+
+    @GetMapping("/get")
+    fun fetchBagItems(): ResponseEntity<Any> {
+        val bagItems = bagRepository.findAll()
+        return ResponseEntity.status(HttpStatus.OK).body(bagItems)
+    }
+
+    @DeleteMapping("/delete/{productId}")
+    fun deleteBagItems(@PathVariable productId: String): ResponseEntity<Any> {
+        bagRepository.deleteByProductId(productId)
+        val updatedBagItemsList = bagRepository.findAll()
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(updatedBagItemsList)
     }
 }
