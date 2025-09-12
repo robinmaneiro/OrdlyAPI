@@ -39,13 +39,13 @@ class BagController(
 
     data class ErrorResponse(val status: Int, val error: String)
 
-    @GetMapping("/get")
+    @GetMapping
     fun fetchBagItems(): ResponseEntity<Any> {
         val bagItems = bagRepository.findAll()
         return ResponseEntity.status(HttpStatus.OK).body(bagItems)
     }
 
-    @PostMapping("/add")
+    @PostMapping
     fun addItemToBag(
         @Valid @RequestBody body: AddToBagRequest
     ): ResponseEntity<Any> {
