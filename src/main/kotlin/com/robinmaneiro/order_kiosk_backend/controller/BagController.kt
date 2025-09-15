@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import kotlin.jvm.optionals.getOrNull
 
-
 // TODO: Review functions and reuse logic
 @RestController
 @RequestMapping("/basket")
@@ -52,7 +51,7 @@ class BagController(
         if (!ObjectId.isValid(body.productId)) {
             return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse(400, "Invalid product id"))
+                .body(ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid product id"))
         }
 
         val product = try {
@@ -60,13 +59,13 @@ class BagController(
         } catch (_: Exception) {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse(500, "Error fetching product"))
+                .body(ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error fetching product"))
         }
 
         if (product == null) {
             return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ErrorResponse(404, "Product not found"))
+                .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Product not found"))
         }
 
         val bagItem = BagItem(
@@ -84,7 +83,7 @@ class BagController(
         } catch (_: Exception) {
             ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse(500, "Failed to save bag item"))
+                .body(ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to save bag item"))
         }
     }
 
@@ -96,7 +95,7 @@ class BagController(
         val itemToUpdate = bagRepository.findByProductId(productId).getOrNull()
             ?: return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ErrorResponse(404, "Failed to retrieve item"))
+                .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Failed to retrieve item"))
 
         val updatedItem = itemToUpdate.copy(
             quantity = body.quantity

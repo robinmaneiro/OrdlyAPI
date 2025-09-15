@@ -63,7 +63,7 @@ class AuthService(
     fun refresh(refreshToken: String): TokenPair {
         if (!jwtService.validateRefreshToken(refreshToken)) {
             throw ResponseStatusException(
-                /* status = */ HttpStatusCode.valueOf(401),
+                /* status = */ HttpStatus.UNAUTHORIZED,
                 /* reason = */ "Invalid refresh token."
             )
         }
@@ -71,7 +71,7 @@ class AuthService(
         val userId = jwtService.getUserIdFromToken(refreshToken)
         val user = userRepository.findById(ObjectId(userId)).orElseThrow {
             throw ResponseStatusException(
-                HttpStatusCode.valueOf(401),
+                HttpStatus.UNAUTHORIZED,
                 "Invalid refresh token."
             )
         }
@@ -79,7 +79,7 @@ class AuthService(
         val hashed = hashToken(refreshToken)
         refreshTokenRepository.findByUserIdAndHashedToken(user.id, hashed)
             ?: throw ResponseStatusException(
-                HttpStatusCode.valueOf(401),
+                HttpStatus.UNAUTHORIZED,
                 "Refresh token not recognized (maybe used or expired?)."
             )
 
