@@ -35,12 +35,33 @@ class BagController(
         @field:Min(1) val quantity: Int,
     )
 
+    data class BagItemResponse(
+        val itemId: String,
+        val productId: String,
+        val quantity: Int,
+        val title: String,
+        val description: String,
+        val price: Double,
+    )
 
     data class ErrorResponse(val status: Int, val error: String)
 
+    private fun List<BagItem>.toBagItemResponse() = map {
+        BagItemResponse(
+            itemId = it.id.toHexString(),
+            productId = it.productId,
+            quantity = it.quantity,
+            title = it.title,
+            description = it.description,
+            price = it.price
+        )
+    }
+
     @GetMapping
     fun fetchBagItems(): ResponseEntity<Any> {
-        val bagItems = bagRepository.findAll()
+        val bagItems = bagRepository
+            .findAll()
+            .toBagItemResponse()
         return ResponseEntity.status(HttpStatus.OK).body(bagItems)
     }
 
@@ -78,7 +99,7 @@ class BagController(
 
         return try {
             bagRepository.save(bagItem)
-            val updatedProductList = bagRepository.findAll()
+            val updatedProductList = bagRepository.findAll().toBagItemResponse()
             ResponseEntity.status(HttpStatus.CREATED).body(updatedProductList)
         } catch (_: Exception) {
             ResponseEntity
@@ -87,12 +108,12 @@ class BagController(
         }
     }
 
-    @PatchMapping("/{productId}")
+    @PatchMapping("/{itemId}")
     fun patchBagItem(
         @Valid @RequestBody body: UpdateItemRequest,
-        @PathVariable productId: String
+        @PathVariable itemId: String
     ): ResponseEntity<Any> {
-        val itemToUpdate = bagRepository.findByProductId(productId).getOrNull()
+        val itemToUpdate = bagRepository.findById(ObjectId(itemId)).getOrNull()
             ?: return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Failed to retrieve item"))
@@ -101,16 +122,16 @@ class BagController(
             quantity = body.quantity
         )
         bagRepository.save(updatedItem)
-        val updatedBagItemsList = bagRepository.findAll()
+        val updatedBagItemsList = bagRepository.findAll().toBagItemResponse()
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(updatedBagItemsList)
     }
 
-    @DeleteMapping("/{productId}")
-    fun deleteBagItems(@PathVariable productId: String): ResponseEntity<Any> {
-        bagRepository.deleteByProductId(productId)
-        val updatedBagItemsList = bagRepository.findAll()
+    @DeleteMapping("/{itemId}")
+    fun deleteBagItems(@PathVariable itemId: String): ResponseEntity<Any> {
+        bagRepository.deleteById(ObjectId(itemId))
+        val updatedBagItemsList = bagRepository.findAll().toBagItemResponse()
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(updatedBagItemsList)
