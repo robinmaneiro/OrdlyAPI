@@ -41,19 +41,27 @@ class BagController(
         val quantity: Int,
         val title: String,
         val description: String,
-        val price: Int,
+        val unitPrice: Int,
+        val price: Int
+    )
+
+    data class BagResponse(
+        val items: List<BagItemResponse>,
+        val totalPrice: Int
     )
 
     data class ErrorResponse(val status: Int, val error: String)
 
     private fun List<BagItem>.toBagItemResponse() = map {
+        val price = it.run { price.times(quantity) }
         BagItemResponse(
             itemId = it.id.toHexString(),
             productId = it.productId,
             quantity = it.quantity,
             title = it.title,
             description = it.description,
-            price = it.price
+            unitPrice = it.price,
+            price = price
         )
     }
 
@@ -62,7 +70,15 @@ class BagController(
         val bagItems = bagRepository
             .findAll()
             .toBagItemResponse()
-        return ResponseEntity.status(HttpStatus.OK).body(bagItems)
+
+        val totalPrice = bagItems.sumOf { it.price }
+
+        val response = BagResponse(
+            items = bagItems,
+            totalPrice = totalPrice
+        )
+
+        return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 
     @PostMapping
