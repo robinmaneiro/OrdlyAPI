@@ -11,5 +11,5 @@ data class BagItem(
     val quantity: Int,
     val title: String,
     val description: String,
-    val price: Double,
+    val price: Int,
     )

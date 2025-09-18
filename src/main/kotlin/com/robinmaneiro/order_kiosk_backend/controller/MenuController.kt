@@ -23,7 +23,7 @@ class MenuController(
         val id: String,
         val title: String,
         val description: String,
-        val price: Double,
+        val price: Int,
         val categories: List<String>
     )
 

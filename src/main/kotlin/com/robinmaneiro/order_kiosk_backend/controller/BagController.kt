@@ -41,7 +41,7 @@ class BagController(
         val quantity: Int,
         val title: String,
         val description: String,
-        val price: Double,
+        val price: Int,
     )
 
     data class ErrorResponse(val status: Int, val error: String)
