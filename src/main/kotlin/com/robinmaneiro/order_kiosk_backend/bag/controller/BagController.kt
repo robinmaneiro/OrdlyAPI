@@ -1,8 +1,10 @@
 package com.robinmaneiro.order_kiosk_backend.bag.controller
 
-import com.robinmaneiro.order_kiosk_backend.bag.database.BagItem
-import com.robinmaneiro.order_kiosk_backend.bag.database.BagRepository
-import com.robinmaneiro.order_kiosk_backend.database.repository.MenuProductsRepository
+import com.robinmaneiro.order_kiosk_backend.bag.database.model.DbBagItem
+import com.robinmaneiro.order_kiosk_backend.bag.service.BagService
+import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagResponse
+import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagItem
+import com.robinmaneiro.order_kiosk_backend.bag.service.model.ErrorResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
@@ -23,8 +25,7 @@ import kotlin.jvm.optionals.getOrNull
 @RestController
 @RequestMapping("/basket")
 class BagController(
-    private val menuProductsRepository: MenuProductsRepository,
-    private val bagRepository: BagRepository
+    private val bagService: BagService
 ) {
     data class AddToBagRequest(
         @field:NotBlank val productId: String,
@@ -35,66 +36,10 @@ class BagController(
         @field:Min(1) val quantity: Int,
     )
 
-    data class BagItemResponse(
-        val itemId: String,
-        val productId: String,
-        val quantity: Int,
-        val title: String,
-        val description: String,
-        val unitPrice: Int,
-        val price: Int
-    )
-
-    data class BagResponse(
-
-        val items: List<BagItemResponse>
-    )
-
-    data class PriceModel(
-        val currencyCode: String = "GBP",
-        val withTax: Int,
-        val withoutTax: Int,
-        val tax: TaxModel
-    )
-
-    data class TaxModel(
-        val vat: VatModel
-    )
-
-    data class VatModel(
-        val amount: Int = 0,
-        val rate: Int = 0
-    )
-
-    data class ErrorResponse(val status: Int, val error: String)
-
-    private fun List<BagItem>.toBagItemResponse() = map {
-        val price = it.run { price.times(quantity) }
-        BagItemResponse(
-            itemId = it.id.toHexString(),
-            productId = it.productId,
-            quantity = it.quantity,
-            title = it.title,
-            description = it.description,
-            unitPrice = it.price,
-            price = price
-        )
-    }
-
     @GetMapping
-    fun fetchBagItems(): ResponseEntity<Any> {
-        val bagItems = bagRepository
-            .findAll()
-            .toBagItemResponse()
-
-        val totalPrice = bagItems.sumOf { it.price }
-
-        val response = BagResponse(
-            items = bagItems,
-            totalPrice = totalPrice
-        )
-
-        return ResponseEntity.status(HttpStatus.OK).body(response)
+    fun fetchBag(): ResponseEntity<Any> {
+        val response = bagService.fetchBag()
+        return ResponseEntity.status(HttpStatus.OK).body(response) // TODO: Handle errors
     }
 
     @PostMapping
@@ -121,7 +66,7 @@ class BagController(
                 .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Product not found"))
         }
 
-        val bagItem = BagItem(
+        val dbBagItem = DbBagItem(
             productId = body.productId,
             quantity = body.quantity,
             title = product.title,
@@ -130,7 +75,7 @@ class BagController(
         )
 
         return try {
-            bagRepository.save(bagItem)
+            bagRepository.save(dbBagItem)
             val updatedProductList = bagRepository.findAll().toBagItemResponse()
             ResponseEntity.status(HttpStatus.CREATED).body(updatedProductList)
         } catch (_: Exception) {

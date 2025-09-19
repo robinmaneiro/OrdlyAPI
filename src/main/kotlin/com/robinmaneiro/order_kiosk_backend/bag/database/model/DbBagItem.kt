@@ -1,11 +1,11 @@
-package com.robinmaneiro.order_kiosk_backend.bag.database
+package com.robinmaneiro.order_kiosk_backend.bag.database.model
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("bag_items")
-data class BagItem(
+data class DbBagItem(
     @Id val id: ObjectId = ObjectId.get(),
     val productId: String,
     val quantity: Int,
