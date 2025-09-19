@@ -1,6 +1,5 @@
-package com.robinmaneiro.order_kiosk_backend.database.repository
+package com.robinmaneiro.order_kiosk_backend.bag.database
 
-import com.robinmaneiro.order_kiosk_backend.database.model.BagItem
 import org.bson.types.ObjectId
 import org.springframework.data.mongodb.repository.MongoRepository
 

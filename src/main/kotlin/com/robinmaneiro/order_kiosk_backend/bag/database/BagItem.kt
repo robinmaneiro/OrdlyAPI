@@ -1,4 +1,4 @@
-package com.robinmaneiro.order_kiosk_backend.database.model
+package com.robinmaneiro.order_kiosk_backend.bag.database
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id

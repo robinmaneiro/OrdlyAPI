@@ -1,7 +1,7 @@
-package com.robinmaneiro.order_kiosk_backend.controller
+package com.robinmaneiro.order_kiosk_backend.bag.controller
 
-import com.robinmaneiro.order_kiosk_backend.database.model.BagItem
-import com.robinmaneiro.order_kiosk_backend.database.repository.BagRepository
+import com.robinmaneiro.order_kiosk_backend.bag.database.BagItem
+import com.robinmaneiro.order_kiosk_backend.bag.database.BagRepository
 import com.robinmaneiro.order_kiosk_backend.database.repository.MenuProductsRepository
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
@@ -46,8 +46,24 @@ class BagController(
     )
 
     data class BagResponse(
-        val items: List<BagItemResponse>,
-        val totalPrice: Int
+
+        val items: List<BagItemResponse>
+    )
+
+    data class PriceModel(
+        val currencyCode: String = "GBP",
+        val withTax: Int,
+        val withoutTax: Int,
+        val tax: TaxModel
+    )
+
+    data class TaxModel(
+        val vat: VatModel
+    )
+
+    data class VatModel(
+        val amount: Int = 0,
+        val rate: Int = 0
     )
 
     data class ErrorResponse(val status: Int, val error: String)
@@ -138,10 +154,16 @@ class BagController(
             quantity = body.quantity
         )
         bagRepository.save(updatedItem)
+
         val updatedBagItemsList = bagRepository.findAll().toBagItemResponse()
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(updatedBagItemsList)
+        val totalPrice = updatedBagItemsList.sumOf { it.price } // TODO: Move this to a method
+
+        val response = BagResponse(
+            items = updatedBagItemsList,
+            totalPrice = totalPrice
+        )
+
+        return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 
     @DeleteMapping("/{itemId}")
