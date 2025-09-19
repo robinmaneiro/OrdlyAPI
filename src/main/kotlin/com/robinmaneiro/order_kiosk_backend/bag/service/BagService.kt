@@ -10,7 +10,6 @@ import com.robinmaneiro.order_kiosk_backend.bag.service.model.PriceModel
 import com.robinmaneiro.order_kiosk_backend.database.repository.MenuProductsRepository
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class BagService(
@@ -69,8 +68,33 @@ class BagService(
             description = product.description,
             price = bagItemPrice
         )
-        
+
         bagRepository.save(productToInsert)
+        return bagRepository.findAll().toBagResponse()
+    }
+
+    fun deleteBagItem(itemId: String): BagResponse {
+        bagRepository.deleteById(ObjectId(itemId))
+        return bagRepository.findAll().toBagResponse()
+    }
+
+    fun patchBagItem(itemId: String, quantity: Int): BagResponse {
+        val itemToUpdate = bagRepository.findById(ObjectId(itemId)).get()
+//            ?: return ResponseEntity TODO: Handle error with Either pattern
+//                .status(HttpStatus.NOT_FOUND)
+//                .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Failed to retrieve item"))
+
+        val updatedTotalPrice = PriceModel(
+            withTax = itemToUpdate.price.unit.withTax.times(quantity),
+            withoutTax = itemToUpdate.price.unit.withoutTax.times(quantity)
+        )
+
+        val updatedItem = itemToUpdate.copy(
+            quantity = quantity,
+            price = itemToUpdate.price.copy(total = updatedTotalPrice)
+        )
+        bagRepository.save(updatedItem)
+
         return bagRepository.findAll().toBagResponse()
     }
 }

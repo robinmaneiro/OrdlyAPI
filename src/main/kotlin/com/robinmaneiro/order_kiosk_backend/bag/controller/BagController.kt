@@ -74,38 +74,20 @@ class BagController(
         }
     }
 
-//    @PatchMapping("/{itemId}")
-//    fun patchBagItem(
-//        @Valid @RequestBody body: UpdateItemRequest,
-//        @PathVariable itemId: String
-//    ): ResponseEntity<Any> {
-//        val itemToUpdate = bagRepository.findById(ObjectId(itemId)).getOrNull()
-//            ?: return ResponseEntity
-//                .status(HttpStatus.NOT_FOUND)
-//                .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Failed to retrieve item"))
-//
-//        val updatedItem = itemToUpdate.copy(
-//            quantity = body.quantity
-//        )
-//        bagRepository.save(updatedItem)
-//
-//        val updatedBagItemsList = bagRepository.findAll().toBagItemResponse()
-//        val totalPrice = updatedBagItemsList.sumOf { it.price } // TODO: Move this to a method
-//
-//        val response = BagResponse(
-//            items = updatedBagItemsList,
-//            totalPrice = totalPrice
-//        )
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(response)
-//    }
+    @PatchMapping("/{itemId}")
+    fun patchBagItem(
+        @Valid @RequestBody body: UpdateItemRequest,
+        @PathVariable itemId: String
+    ): ResponseEntity<Any> {
+        val response = bagService.patchBagItem(itemId, body.quantity)
+        return ResponseEntity.status(HttpStatus.OK).body(response)
+    }
 
-//    @DeleteMapping("/{itemId}")
-//    fun deleteBagItems(@PathVariable itemId: String): ResponseEntity<Any> {
-//        bagRepository.deleteById(ObjectId(itemId))
-//        val updatedBagItemsList = bagRepository.findAll().toBagItemResponse()
-//        return ResponseEntity
-//            .status(HttpStatus.OK)
-//            .body(updatedBagItemsList)
-//    }
+    @DeleteMapping("/{itemId}")
+    fun deleteBagItems(@PathVariable itemId: String): ResponseEntity<Any> {
+        val response = bagService.deleteBagItem(itemId)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(response)
+    }
 }
