@@ -2,10 +2,12 @@ package com.robinmaneiro.order_kiosk_backend.menu.service
 
 import com.robinmaneiro.order_kiosk_backend.menu.database.MenuCategoriesRepository
 import com.robinmaneiro.order_kiosk_backend.menu.database.MenuProductsRepository
+import com.robinmaneiro.order_kiosk_backend.menu.database.model.DbMenuProduct
 import com.robinmaneiro.order_kiosk_backend.menu.service.model.MenuCategory
 import com.robinmaneiro.order_kiosk_backend.menu.service.model.MenuCategoryResponse
 import com.robinmaneiro.order_kiosk_backend.menu.service.model.MenuProductsResponse
 import com.robinmaneiro.order_kiosk_backend.menu.service.model.MenuSingleProductResponse
+import com.robinmaneiro.order_kiosk_backend.menu.service.model.PriceData
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrNull
 
@@ -14,6 +16,16 @@ class MenuService(
     private val menuCategoriesRepository: MenuCategoriesRepository,
     private val menuProductsRepository: MenuProductsRepository
 ) {
+    private fun DbMenuProduct.asMenuSingleProduct() =  MenuSingleProductResponse(
+            id = itemId,
+            title = title,
+            description = description,
+            price = PriceData(
+                withTax = price,
+                withoutTax = price
+            ),
+            categories = categories)
+
     fun fetchAllMenuCategories(): MenuCategoryResponse {
         return menuCategoriesRepository.findAll().map {
             MenuCategory(
@@ -28,13 +40,7 @@ class MenuService(
         return MenuProductsResponse(
             itemCount = menuProductsRepository.findAll().count { categoryId in it.categories },
             items = menuProductsRepository.findAll().filter { categoryId in it.categories }.map {
-                MenuSingleProductResponse(
-                    id = it.itemId,
-                    title = it.title,
-                    description = it.description,
-                    price = it.price,
-                    categories = it.categories
-                )
+                it.asMenuSingleProduct()
             }
         )
     }
@@ -42,27 +48,11 @@ class MenuService(
     fun fetchAllMenuProducts(): MenuProductsResponse {
         return MenuProductsResponse(
             itemCount = menuProductsRepository.findAll().count(),
-            items = menuProductsRepository.findAll().map {
-                MenuSingleProductResponse(
-                    id = it.id.toHexString(),
-                    title = it.title,
-                    description = it.description,
-                    price = it.price,
-                    categories = it.categories
-                )
-            }
+            items = menuProductsRepository.findAll().map { it.asMenuSingleProduct() }
         )
     }
 
     fun fetchMenuProduct(productId: String): MenuSingleProductResponse? {
-        return menuProductsRepository.findByItemId(productId).getOrNull()?.let {
-            MenuSingleProductResponse(
-                id = it.itemId,
-                title = it.title,
-                description = it.description,
-                price = it.price,
-                categories = it.categories
-            )
-        }
+        return menuProductsRepository.findByItemId(productId).getOrNull()?.asMenuSingleProduct()
     }
 }

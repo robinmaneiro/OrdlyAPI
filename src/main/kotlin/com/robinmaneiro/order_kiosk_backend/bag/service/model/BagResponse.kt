@@ -2,7 +2,7 @@ package com.robinmaneiro.order_kiosk_backend.bag.service.model
 
 
 data class BagResponse(
-    val totalCost: PriceModel,
+    val totalCost: PriceData,
     val itemCount: Int,
     val items: List<BagItem>
 )
@@ -17,11 +17,11 @@ data class BagItem(
 )
 
 data class ItemPrice(
-    val unit: PriceModel,
-    val total: PriceModel
+    val unit: PriceData,
+    val total: PriceData
 )
 
-data class PriceModel(
+data class PriceData(
     val currencyCode: String = "GBP",
     val withTax: Int,
     val withoutTax: Int,

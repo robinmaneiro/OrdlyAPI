@@ -6,7 +6,7 @@ import com.robinmaneiro.order_kiosk_backend.bag.database.model.DbBagItem
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagItem
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagResponse
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.ItemPrice
-import com.robinmaneiro.order_kiosk_backend.bag.service.model.PriceModel
+import com.robinmaneiro.order_kiosk_backend.bag.service.model.PriceData
 import com.robinmaneiro.order_kiosk_backend.menu.database.MenuProductsRepository
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
@@ -29,7 +29,7 @@ class BagService(
             )
         }
 
-        val totalCost = PriceModel(
+        val totalCost = PriceData(
             withTax = items.sumOf { it.price.total.withTax },
             withoutTax = items.sumOf { it.price.total.withoutTax }
         )
@@ -54,11 +54,11 @@ class BagService(
 
         val totalPrice = product.price.times(requestBody.quantity)
         val bagItemPrice = ItemPrice(
-            unit = PriceModel(
+            unit = PriceData(
                 withTax = product.price,
                 withoutTax = product.price
             ),
-            total = PriceModel(
+            total = PriceData(
                 withTax = totalPrice,
                 withoutTax = totalPrice
             )
@@ -87,7 +87,7 @@ class BagService(
 //                .status(HttpStatus.NOT_FOUND)
 //                .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Failed to retrieve item"))
 
-        val updatedTotalPrice = PriceModel(
+        val updatedTotalPrice = PriceData(
             withTax = itemToUpdate.price.unit.withTax.times(quantity),
             withoutTax = itemToUpdate.price.unit.withoutTax.times(quantity)
         )
