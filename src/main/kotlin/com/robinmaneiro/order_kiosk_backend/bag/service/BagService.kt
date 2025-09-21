@@ -7,7 +7,7 @@ import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagItem
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagResponse
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.ItemPrice
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.PriceModel
-import com.robinmaneiro.order_kiosk_backend.database.repository.MenuProductsRepository
+import com.robinmaneiro.order_kiosk_backend.menu.database.MenuProductsRepository
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 
