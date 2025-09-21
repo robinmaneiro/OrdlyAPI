@@ -3,6 +3,7 @@ package com.robinmaneiro.order_kiosk_backend.bag.service.model
 
 data class BagResponse(
     val totalCost: PriceModel,
+    val itemCount: Int,
     val items: List<BagItem>
 )
 
