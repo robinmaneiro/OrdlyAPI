@@ -6,6 +6,7 @@ import com.robinmaneiro.order_kiosk_backend.bag.service.model.ErrorResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
+import org.apache.coyote.Response
 import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -84,8 +85,16 @@ class BagController(
     }
 
     @DeleteMapping("/{itemId}")
-    fun deleteBagItems(@PathVariable itemId: String): ResponseEntity<Any> {
+    fun deleteBagItem(@PathVariable itemId: String): ResponseEntity<Any> {
         val response = bagService.deleteBagItem(itemId)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(response)
+    }
+
+    @DeleteMapping("all")
+    fun deleteAllBagItems(): ResponseEntity<Any> {
+        val response =  bagService.deleteAllBagItems() //It should return in an empty response
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(response)

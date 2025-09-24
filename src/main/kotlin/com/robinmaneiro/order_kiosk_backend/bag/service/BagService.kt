@@ -100,4 +100,9 @@ class BagService(
 
         return bagRepository.findAll().toBagResponse()
     }
+
+    fun deleteAllBagItems(): BagResponse {
+        bagRepository.deleteAll()
+        return bagRepository.findAll().toBagResponse()
+    }
 }
