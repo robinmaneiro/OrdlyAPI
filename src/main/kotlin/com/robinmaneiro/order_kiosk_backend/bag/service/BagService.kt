@@ -34,7 +34,7 @@ class BagService(
             withoutTax = items.sumOf { it.price.total.withoutTax }
         )
 
-        val itemCount = items.count()
+        val itemCount = items.sumOf { it.quantity }
 
         return BagResponse(
             totalCost = totalCost,
