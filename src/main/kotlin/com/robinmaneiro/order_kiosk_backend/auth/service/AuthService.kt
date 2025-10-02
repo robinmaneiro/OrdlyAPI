@@ -1,12 +1,15 @@
-package com.robinmaneiro.order_kiosk_backend.security
+package com.robinmaneiro.order_kiosk_backend.auth.service
 
+import com.robinmaneiro.order_kiosk_backend.auth.controller.AuthController
+import com.robinmaneiro.order_kiosk_backend.auth.service.model.RegistrationResponse
 import com.robinmaneiro.order_kiosk_backend.database.model.RefreshToken
 import com.robinmaneiro.order_kiosk_backend.database.model.User
 import com.robinmaneiro.order_kiosk_backend.database.repository.RefreshTokenRepository
 import com.robinmaneiro.order_kiosk_backend.database.repository.UserRepository
+import com.robinmaneiro.order_kiosk_backend.security.HashEncoder
+import com.robinmaneiro.order_kiosk_backend.security.JwtService
 import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,16 +30,23 @@ class AuthService(
         val refreshToken: String,
     )
 
-    fun register(email: String, password: String): User {
-        val user = userRepository.findByEmail(email.trim())
+    fun register(registrationBody: AuthController.RegistrationRequestBody): RegistrationResponse {
+        val user = userRepository.findByEmail(registrationBody.email.trim())
         if (user != null) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "A user with this email already exists")
         }
-        return userRepository.save(
+        val savedUser =  userRepository.save(
             User(
-                email = email,
-                hashedPassword = hashEncoder.encode(password)
+                title = registrationBody.title,
+                firstName = registrationBody.firstName,
+                lastName = registrationBody.lastName,
+                email = registrationBody.email,
+                hashedPassword = hashEncoder.encode(registrationBody.password),
             )
+        )
+
+        return RegistrationResponse(
+            savedUser.id.toHexString()
         )
     }
 
