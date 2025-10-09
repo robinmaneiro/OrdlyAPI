@@ -1,13 +1,13 @@
 package com.robinmaneiro.order_kiosk_backend.auth.controller
 
 import com.robinmaneiro.order_kiosk_backend.auth.service.AuthService
+import com.robinmaneiro.order_kiosk_backend.auth.service.model.AccountDetailsResponse
 import com.robinmaneiro.order_kiosk_backend.auth.service.model.RegistrationResponse
-import com.robinmaneiro.order_kiosk_backend.database.model.User
-import jakarta.servlet.Registration
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping

@@ -4,7 +4,6 @@ import com.robinmaneiro.order_kiosk_backend.menu.database.MenuCategoriesReposito
 import com.robinmaneiro.order_kiosk_backend.menu.database.MenuProductsRepository
 import com.robinmaneiro.order_kiosk_backend.menu.database.model.DbMenuProduct
 import com.robinmaneiro.order_kiosk_backend.menu.service.model.MenuCategory
-import com.robinmaneiro.order_kiosk_backend.menu.service.model.MenuCategoryResponse
 import com.robinmaneiro.order_kiosk_backend.menu.service.model.MenuProductsResponse
 import com.robinmaneiro.order_kiosk_backend.menu.service.model.MenuSingleProductResponse
 import com.robinmaneiro.order_kiosk_backend.menu.service.model.PriceData
@@ -26,7 +25,7 @@ class MenuService(
             ),
             categories = categories)
 
-    fun fetchAllMenuCategories(): MenuCategoryResponse {
+    fun fetchAllMenuCategories(): List<MenuCategory> {
         return menuCategoriesRepository.findAll().map {
             MenuCategory(
                 id = it.id.toHexString(),
