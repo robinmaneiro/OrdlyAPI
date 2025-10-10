@@ -1,7 +1,7 @@
 package com.robinmaneiro.order_kiosk_backend.auth.controller
 
 import com.robinmaneiro.order_kiosk_backend.auth.service.AuthService
-import com.robinmaneiro.order_kiosk_backend.auth.service.model.AccountDetailsResponse
+import com.robinmaneiro.order_kiosk_backend.account.service.model.AccountDetailsResponse
 import com.robinmaneiro.order_kiosk_backend.auth.service.model.RegistrationResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email

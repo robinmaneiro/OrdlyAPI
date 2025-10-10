@@ -1,4 +1,4 @@
-package com.robinmaneiro.order_kiosk_backend.auth.service.model
+package com.robinmaneiro.order_kiosk_backend.account.service.model
 
 data class AccountDetailsResponse(
     val id: String,
@@ -6,6 +6,6 @@ data class AccountDetailsResponse(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val dateObBirth: String?,
+    val dateOfBirth: String?,
     val phone: String
 )

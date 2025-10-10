@@ -1,6 +1,6 @@
 package com.robinmaneiro.order_kiosk_backend.account.service
 
-import com.robinmaneiro.order_kiosk_backend.auth.service.model.AccountDetailsResponse
+import com.robinmaneiro.order_kiosk_backend.account.service.model.AccountDetailsResponse
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,7 +12,7 @@ class AccountService {
             firstName = "Robin",
             lastName = "Maneiro",
             email = "robin@gmail.com",
-            dateObBirth = "14-07-1990",
+            dateOfBirth = "14-07-1990",
             phone = "777777777"
         )
     }
