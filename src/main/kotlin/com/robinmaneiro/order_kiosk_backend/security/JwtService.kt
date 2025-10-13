@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import java.time.Instant
 import java.util.Base64
 import java.util.Date
 
@@ -45,13 +46,19 @@ class JwtService(
     fun validateAccessToken(accessToken: String): Boolean {
         val claims = parseAllClaims(accessToken) ?: return false
         val tokenType = claims["type"] as? String ?: return false
-        return tokenType == "access"
+        return !claims.hasTokenExpired() && tokenType == "access"
     }
 
     fun validateRefreshToken(refreshToken: String): Boolean {
         val claims = parseAllClaims(refreshToken) ?: return false
         val tokenType = claims["type"] as? String ?: return false
-        return tokenType == "refresh"
+        return !claims.hasTokenExpired() && tokenType == "refresh"
+    }
+
+    private fun Claims.hasTokenExpired(): Boolean {
+        val expirationDate = (this["exp"] as? Long)?.let { Instant.ofEpochSecond(it) } ?: return true
+        val allowedClockSkewSeconds = 30L
+        return Instant.now().isAfter(expirationDate.plusSeconds(allowedClockSkewSeconds))
     }
 
     fun getUserIdFromToken(token: String): String {
