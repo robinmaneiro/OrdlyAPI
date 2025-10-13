@@ -26,7 +26,7 @@ class SecurityConfig(
                     .permitAll()
                     .dispatcherTypeMatchers(
                         DispatcherType.ERROR,
-                        DispatcherType.REQUEST,
+                        DispatcherType.FORWARD
                     )
                     .permitAll()
                     .anyRequest()
@@ -34,7 +34,8 @@ class SecurityConfig(
             }.exceptionHandling { configurer ->
                 // Will throw a 401 instead of 403
                 configurer.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-            }.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
+            }
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
     }
 }
