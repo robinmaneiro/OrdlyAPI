@@ -45,34 +45,14 @@ class BagController(
     fun addItemToBag(
         @Valid @RequestBody requestBody: AddToBagRequest
     ): ResponseEntity<Any> {
-        if (!ObjectId.isValid(requestBody.productId)) {
-            return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid product id"))
-        }
-
-//        val product = try { TODO: Move this to service
-//            menuProductsRepository.findByItemId(body.productId).getOrNull()
-//        } catch (_: Exception) {
+//        if (!ObjectId.isValid(requestBody.productId)) {
 //            return ResponseEntity
-//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body(ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error fetching product"))
+//                .status(HttpStatus.BAD_REQUEST)
+//                .body(ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid product id"))
 //        }
 
-//        if (product == null) { TODO: Move this to service
-//            return ResponseEntity
-//                .status(HttpStatus.NOT_FOUND)
-//                .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Product not found"))
-//        }
-
-        return try {
-            val response = bagService.addItemToBag(requestBody)
-            ResponseEntity.status(HttpStatus.CREATED).body(response)
-        } catch (_: Exception) {
-            ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to save bag item"))
-        }
+        val response = bagService.addItemToBag(requestBody)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @PatchMapping("/{itemId}")
@@ -94,7 +74,7 @@ class BagController(
 
     @DeleteMapping("all")
     fun deleteAllBagItems(): ResponseEntity<Any> {
-        val response =  bagService.deleteAllBagItems() //It should return in an empty response
+        val response = bagService.deleteAllBagItems() //It should return in an empty response
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(response)

@@ -36,5 +36,3 @@ data class VatModel(
     val amount: Int = 0,
     val rate: Int = 0
 )
-
-data class ErrorResponse(val status: Int, val error: String)

@@ -8,8 +8,10 @@ import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagResponse
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.ItemPrice
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.PriceData
 import com.robinmaneiro.order_kiosk_backend.menu.database.MenuProductsRepository
+import com.robinmaneiro.order_kiosk_backend.util.errorhandling.ProductNotFoundException
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
+import kotlin.jvm.optionals.getOrElse
 
 @Service
 class BagService(
@@ -50,7 +52,9 @@ class BagService(
     }
 
     fun addItemToBag(requestBody: BagController.AddToBagRequest): BagResponse {
-        val product = productsRepository.findByItemId(requestBody.productId).get() // TODO: Handle null
+        val product = productsRepository.findByItemId(requestBody.productId).getOrElse {
+            throw ProductNotFoundException(requestBody.productId)
+        }
 
         val totalPrice = product.price.times(requestBody.quantity)
         val bagItemPrice = ItemPrice(
