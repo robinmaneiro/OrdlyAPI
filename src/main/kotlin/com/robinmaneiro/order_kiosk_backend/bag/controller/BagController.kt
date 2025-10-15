@@ -1,26 +1,15 @@
 package com.robinmaneiro.order_kiosk_backend.bag.controller
 
 import com.robinmaneiro.order_kiosk_backend.bag.service.BagService
-import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagResponse
-import com.robinmaneiro.order_kiosk_backend.bag.service.model.ErrorResponse
+import com.robinmaneiro.order_kiosk_backend.util.errorhandling.ErrorResponse
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
-import org.apache.coyote.Response
 import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import kotlin.jvm.optionals.getOrNull
+import org.springframework.web.bind.annotation.*
 
-// TODO: Review functions and reuse logic
 @RestController
 @RequestMapping("/basket")
 class BagController(
@@ -38,19 +27,13 @@ class BagController(
     @GetMapping
     fun fetchBag(): ResponseEntity<Any> {
         val response = bagService.fetchBag()
-        return ResponseEntity.status(HttpStatus.OK).body(response) // TODO: Handle errors
+        return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 
     @PostMapping
     fun addItemToBag(
         @Valid @RequestBody requestBody: AddToBagRequest
     ): ResponseEntity<Any> {
-//        if (!ObjectId.isValid(requestBody.productId)) {
-//            return ResponseEntity
-//                .status(HttpStatus.BAD_REQUEST)
-//                .body(ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid product id"))
-//        }
-
         val response = bagService.addItemToBag(requestBody)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }

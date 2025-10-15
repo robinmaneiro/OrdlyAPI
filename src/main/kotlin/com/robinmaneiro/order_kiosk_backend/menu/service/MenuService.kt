@@ -10,7 +10,7 @@ import com.robinmaneiro.order_kiosk_backend.menu.service.model.PriceData
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrNull
 
-@Service //TODO: Move logic to their own repository.
+@Service
 class MenuService(
     private val menuCategoriesRepository: MenuCategoriesRepository,
     private val menuProductsRepository: MenuProductsRepository

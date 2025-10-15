@@ -13,4 +13,4 @@ data class DbBagItem(
     val title: String,
     val description: String,
     val price: ItemPrice,
-    )
+)
