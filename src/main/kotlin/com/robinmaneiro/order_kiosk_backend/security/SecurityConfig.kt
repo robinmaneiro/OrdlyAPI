@@ -1,5 +1,6 @@
 package com.robinmaneiro.order_kiosk_backend.security
 
+import com.robinmaneiro.order_kiosk_backend.security.token.JwtAuthFilter
 import jakarta.servlet.DispatcherType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

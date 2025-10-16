@@ -1,4 +1,4 @@
-package com.robinmaneiro.order_kiosk_backend.security
+package com.robinmaneiro.order_kiosk_backend.security.token
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts

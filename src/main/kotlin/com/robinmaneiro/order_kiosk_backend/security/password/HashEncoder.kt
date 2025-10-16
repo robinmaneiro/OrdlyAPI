@@ -1,4 +1,4 @@
-package com.robinmaneiro.order_kiosk_backend.security
+package com.robinmaneiro.order_kiosk_backend.security.password
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component

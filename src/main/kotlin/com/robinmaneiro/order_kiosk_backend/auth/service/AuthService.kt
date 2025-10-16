@@ -6,8 +6,8 @@ import com.robinmaneiro.order_kiosk_backend.database.model.RefreshToken
 import com.robinmaneiro.order_kiosk_backend.database.model.User
 import com.robinmaneiro.order_kiosk_backend.database.repository.RefreshTokenRepository
 import com.robinmaneiro.order_kiosk_backend.database.repository.UserRepository
-import com.robinmaneiro.order_kiosk_backend.security.HashEncoder
-import com.robinmaneiro.order_kiosk_backend.security.JwtService
+import com.robinmaneiro.order_kiosk_backend.security.password.HashEncoder
+import com.robinmaneiro.order_kiosk_backend.security.token.JwtService
 import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
