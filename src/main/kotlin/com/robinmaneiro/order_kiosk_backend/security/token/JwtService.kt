@@ -35,13 +35,25 @@ class JwtService(
             .compact()
     }
 
-    fun generateAccessToken(userId: String): String {
-        return generateToken(userId, "access", accessTokenValidityMs)
+    //region Guest Tokens
+    fun generateGuestAccessToken(guestUserId: String): String {
+        return generateToken(guestUserId, "guest_access", accessTokenValidityMs)
     }
 
-    fun generateRefreshToken(userId: String): String {
-        return generateToken(userId, "refresh", refreshTokenValidityMs)
+    fun generateGuestRefreshToken(guestUserId: String): String {
+        return generateToken(guestUserId, "guest_refresh", refreshTokenValidityMs)
     }
+    //endregion
+
+    //region Authenticated Tokens
+    fun generateAuthAccessToken(userId: String): String {
+        return generateToken(userId, "auth_access", accessTokenValidityMs)
+    }
+
+    fun generateAuthRefreshToken(userId: String): String {
+        return generateToken(userId, "auth_refresh", refreshTokenValidityMs)
+    }
+    //endregion
 
     fun validateAccessToken(accessToken: String): Boolean {
         val claims = parseAllClaims(accessToken) ?: return false
