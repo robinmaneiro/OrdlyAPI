@@ -47,13 +47,13 @@ class JwtService(
     fun validateAccessToken(accessToken: String): Boolean {
         val claims = parseAllClaims(accessToken) ?: return false
         val tokenType = claims["type"] as? String ?: return false
-        return !claims.hasTokenExpired() && tokenType == "auth_access"
+        return !claims.hasTokenExpired() && tokenType in listOf("auth_access", "guest_access")
     }
 
     fun validateRefreshToken(refreshToken: String): Boolean {
         val claims = parseAllClaims(refreshToken) ?: return false
         val tokenType = claims["type"] as? String ?: return false
-        return !claims.hasTokenExpired() && tokenType == "auth_refresh"
+        return !claims.hasTokenExpired() && tokenType in listOf("auth_refresh", "guest_refresh")
     }
 
     private fun Claims.hasTokenExpired(): Boolean {
