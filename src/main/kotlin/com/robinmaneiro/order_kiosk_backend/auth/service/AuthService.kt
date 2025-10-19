@@ -7,6 +7,8 @@ import com.robinmaneiro.order_kiosk_backend.database.model.User
 import com.robinmaneiro.order_kiosk_backend.database.repository.RefreshTokenRepository
 import com.robinmaneiro.order_kiosk_backend.database.repository.UserRepository
 import com.robinmaneiro.order_kiosk_backend.security.HashEncoder
+import com.robinmaneiro.order_kiosk_backend.security.model.TokenClaims
+import com.robinmaneiro.order_kiosk_backend.security.model.Variant
 import com.robinmaneiro.order_kiosk_backend.security.token.JwtService
 import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
@@ -58,8 +60,9 @@ class AuthService(
             throw BadCredentialsException("Invalid credentials.")
         }
 
-        val newAccessToken = jwtService.generateAuthAccessToken(user.id.toHexString())
-        val newRefreshToken = jwtService.generateAuthRefreshToken(user.id.toHexString())
+        val userId = user.id.toHexString()
+        val newAccessToken = jwtService.generateAccessToken(TokenClaims(userId, Variant.User.AccessToken))
+        val newRefreshToken = jwtService.generateRefreshToken(TokenClaims(userId, Variant.User.RefreshToken))
 
         storeRefreshToken(user.id, newRefreshToken)
 
@@ -94,8 +97,8 @@ class AuthService(
             )
 
         refreshTokenRepository.deleteByUserIdAndHashedToken(user.id, hashed)
-        val newAccessToken = jwtService.generateAuthAccessToken(userId)
-        val newRefreshToken = jwtService.generateAuthRefreshToken(userId)
+        val newAccessToken = jwtService.generateAccessToken(TokenClaims(userId, Variant.User.AccessToken))
+        val newRefreshToken = jwtService.generateRefreshToken(TokenClaims(userId, Variant.User.RefreshToken))
 
         storeRefreshToken(user.id, newRefreshToken)
         return TokenPair(

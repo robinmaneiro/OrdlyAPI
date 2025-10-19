@@ -1,5 +1,6 @@
 package com.robinmaneiro.order_kiosk_backend.security.token
 
+import com.robinmaneiro.order_kiosk_backend.security.model.TokenClaims
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
@@ -20,51 +21,39 @@ class JwtService(
     val refreshTokenValidityMs = 30L * 24 * 60 * 60 * 1000L // 30 days
 
     private fun generateToken(
-        userId: String,
-        type: String,
+        tokenClaims: TokenClaims,
         expiry: Long
     ): String {
         val now = Date()
         val expiryDate = Date(now.time + expiry)
         return Jwts.builder()
-            .subject(userId)
-            .claim("type", type)
+            .subject(tokenClaims.userId)
+            .claim("type", tokenClaims.variant.type)
+            .claim("role", tokenClaims.variant.role)
             .issuedAt(now)
             .expiration(expiryDate)
             .signWith(secretKey, Jwts.SIG.HS256)
             .compact()
     }
 
-    //region Guest Tokens
-    fun generateGuestAccessToken(guestUserId: String): String {
-        return generateToken(guestUserId, "guest_access", accessTokenValidityMs)
+    fun generateAccessToken(tokenClaims: TokenClaims): String {
+        return generateToken(tokenClaims, accessTokenValidityMs)
     }
 
-    fun generateGuestRefreshToken(guestUserId: String): String {
-        return generateToken(guestUserId, "guest_refresh", refreshTokenValidityMs)
+    fun generateRefreshToken(tokenClaims: TokenClaims): String {
+        return generateToken(tokenClaims, refreshTokenValidityMs)
     }
-    //endregion
-
-    //region Authenticated Tokens
-    fun generateAuthAccessToken(userId: String): String {
-        return generateToken(userId, "auth_access", accessTokenValidityMs)
-    }
-
-    fun generateAuthRefreshToken(userId: String): String {
-        return generateToken(userId, "auth_refresh", refreshTokenValidityMs)
-    }
-    //endregion
 
     fun validateAccessToken(accessToken: String): Boolean {
         val claims = parseAllClaims(accessToken) ?: return false
         val tokenType = claims["type"] as? String ?: return false
-        return !claims.hasTokenExpired() && tokenType == "access"
+        return !claims.hasTokenExpired() && tokenType == "auth_access"
     }
 
     fun validateRefreshToken(refreshToken: String): Boolean {
         val claims = parseAllClaims(refreshToken) ?: return false
         val tokenType = claims["type"] as? String ?: return false
-        return !claims.hasTokenExpired() && tokenType == "refresh"
+        return !claims.hasTokenExpired() && tokenType == "auth_refresh"
     }
 
     private fun Claims.hasTokenExpired(): Boolean {
@@ -77,6 +66,12 @@ class JwtService(
         val claims = parseAllClaims(token)
             ?: throw ResponseStatusException(HttpStatusCode.valueOf(401), "Invalid token.")
         return claims.subject
+    }
+
+    fun getRoleFromClaim(token: String): String {
+        val claims = parseAllClaims(token)
+            ?: throw ResponseStatusException(HttpStatusCode.valueOf(401), "Invalid token.")
+        return (claims["role"] as? String) ?: "GUEST"
     }
 
     private fun parseAllClaims(token: String): Claims? {
