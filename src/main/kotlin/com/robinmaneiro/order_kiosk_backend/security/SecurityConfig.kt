@@ -23,7 +23,7 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/auth/**", "/api/v1/guest-session/**")
+                    .requestMatchers("/api/v1/auth/**", "/api/v1/guests/**")
                     .permitAll()
                     .dispatcherTypeMatchers(
                         DispatcherType.ERROR,
