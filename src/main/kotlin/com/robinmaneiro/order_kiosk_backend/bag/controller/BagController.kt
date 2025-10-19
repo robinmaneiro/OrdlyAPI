@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/basket")
+@RequestMapping("/api/v1/basket")
 class BagController(
     private val bagService: BagService
 ) {

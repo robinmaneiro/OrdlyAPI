@@ -2,6 +2,7 @@ package com.robinmaneiro.order_kiosk_backend.guest.controller
 
 import com.robinmaneiro.order_kiosk_backend.auth.service.AuthService
 import com.robinmaneiro.order_kiosk_backend.auth.service.AuthService.TokenPair
+import com.robinmaneiro.order_kiosk_backend.guest.service.GuestDetailsResponse
 import com.robinmaneiro.order_kiosk_backend.guest.service.GuestService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/guest-session")
+@RequestMapping("/api/v1/guests")
 class GuestController(
     private val guestService: GuestService
 ) {
@@ -26,4 +27,9 @@ class GuestController(
 //        val session = guestService.refreshSession(refreshRequest)
 //        return ResponseEntity.ok(session)
 //    }
+
+    @GetMapping("/me")
+    fun getGuestDetails(): GuestDetailsResponse {
+        return guestService.getGuestDetails()
+    }
 }
