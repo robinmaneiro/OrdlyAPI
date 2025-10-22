@@ -7,5 +7,7 @@ data class AccountDetailsResponse(
     val lastName: String,
     val email: String,
     val dateOfBirth: String?,
-    val phone: String
+    val phone: String,
+    val bagId: String,
+    val wishlistId: String
 )

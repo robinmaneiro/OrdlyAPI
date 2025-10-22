@@ -13,7 +13,9 @@ class AccountService {
             lastName = "Maneiro",
             email = "robin@gmail.com",
             dateOfBirth = "14-07-1990",
-            phone = "777777777"
+            phone = "777777777",
+            bagId = "bag_id_example",
+            wishlistId = "wishlist_id_example"
         )
     }
 }
