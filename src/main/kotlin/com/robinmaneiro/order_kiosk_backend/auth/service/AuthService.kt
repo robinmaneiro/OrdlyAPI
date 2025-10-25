@@ -6,7 +6,7 @@ import com.robinmaneiro.order_kiosk_backend.database.model.RefreshToken
 import com.robinmaneiro.order_kiosk_backend.database.model.User
 import com.robinmaneiro.order_kiosk_backend.database.repository.RefreshTokenRepository
 import com.robinmaneiro.order_kiosk_backend.database.repository.UserRepository
-import com.robinmaneiro.order_kiosk_backend.security.HashEncoder
+import com.robinmaneiro.order_kiosk_backend.security.password.HashEncoder
 import com.robinmaneiro.order_kiosk_backend.security.model.TokenClaims
 import com.robinmaneiro.order_kiosk_backend.security.model.Variant
 import com.robinmaneiro.order_kiosk_backend.security.token.JwtService

@@ -1,18 +1,15 @@
 package com.robinmaneiro.order_kiosk_backend.guest.service
 
-import com.robinmaneiro.order_kiosk_backend.auth.service.AuthService
 import com.robinmaneiro.order_kiosk_backend.auth.service.AuthService.TokenPair
 import com.robinmaneiro.order_kiosk_backend.guest.service.model.GuestDetailsResponse
 import com.robinmaneiro.order_kiosk_backend.security.model.TokenClaims
 import com.robinmaneiro.order_kiosk_backend.security.model.Variant
 import com.robinmaneiro.order_kiosk_backend.security.token.JwtService
-import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
-import java.util.UUID
+import java.util.*
 
 @Service
 class GuestService(
