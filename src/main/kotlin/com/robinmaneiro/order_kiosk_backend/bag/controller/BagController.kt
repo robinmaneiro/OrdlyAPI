@@ -24,30 +24,34 @@ class BagController(
         @field:Min(1) val quantity: Int,
     )
 
-    @GetMapping
-    fun fetchBag(): ResponseEntity<Any> {
-        val response = bagService.fetchBag()
+    @GetMapping("/{bagId}")
+    fun fetchBag(
+        @PathVariable bagId: String
+    ): ResponseEntity<Any> {
+        val response = bagService.fetchBag(bagId)
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 
-    @PostMapping
+    @PostMapping("/{bagId}")
     fun addItemToBag(
+        @PathVariable bagId: String,
         @Valid @RequestBody requestBody: AddToBagRequest
     ): ResponseEntity<Any> {
-        val response = bagService.addItemToBag(requestBody)
+        val response = bagService.addItemToBag(bagId, requestBody)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
-    @PatchMapping("/{itemId}")
+    @PatchMapping("/{bagId}/{itemId}")
     fun patchBagItem(
-        @Valid @RequestBody body: UpdateItemRequest,
-        @PathVariable itemId: String
+        @PathVariable bagId: String,
+        @PathVariable itemId: String,
+        @Valid @RequestBody body: UpdateItemRequest
     ): ResponseEntity<Any> {
-        val response = bagService.patchBagItem(itemId, body.quantity)
+        val response = bagService.patchBagItem(bagId, itemId, body.quantity)
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 
-    @DeleteMapping("/{itemId}")
+    @DeleteMapping("/{bagId}/{itemId}")
     fun deleteBagItem(@PathVariable itemId: String): ResponseEntity<Any> {
         val response = bagService.deleteBagItem(itemId)
         return ResponseEntity
@@ -55,7 +59,7 @@ class BagController(
             .body(response)
     }
 
-    @DeleteMapping("all")
+    @DeleteMapping("/{bagId}/all")
     fun deleteAllBagItems(): ResponseEntity<Any> {
         val response = bagService.deleteAllBagItems() //It should return in an empty response
         return ResponseEntity

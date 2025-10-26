@@ -2,6 +2,7 @@ package com.robinmaneiro.order_kiosk_backend.bag.service
 
 import com.robinmaneiro.order_kiosk_backend.bag.controller.BagController
 import com.robinmaneiro.order_kiosk_backend.bag.database.BagRepository
+import com.robinmaneiro.order_kiosk_backend.bag.database.model.DbBag
 import com.robinmaneiro.order_kiosk_backend.bag.database.model.DbBagItem
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagItem
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.BagResponse
@@ -12,6 +13,7 @@ import com.robinmaneiro.order_kiosk_backend.util.errorhandling.ProductNotFoundEx
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class BagService(
@@ -19,8 +21,8 @@ class BagService(
     private val productsRepository: MenuProductsRepository
 ) {
 
-    private fun List<DbBagItem>.toBagResponse(): BagResponse {
-        val items = this.map { dbBagItem ->
+    private fun DbBag.toBagResponse(): BagResponse {
+        val items = items.map { dbBagItem ->
             BagItem(
                 itemId = dbBagItem.id.toHexString(),
                 productId = dbBagItem.productId,
@@ -45,13 +47,21 @@ class BagService(
         )
     }
 
-    fun fetchBag(): BagResponse {
+    private fun getBagOrThrow(bagId: String): DbBag {
+        return bagRepository.findById(ObjectId(bagId)).getOrElse {
+            throw IllegalArgumentException("Invalid Bag ID: $bagId")
+        }
+    }
+
+    fun fetchBag(bagId: String): BagResponse {
         return bagRepository
-            .findAll()
+            .findById(ObjectId(bagId))
+            .getOrElse { throw IllegalArgumentException("Invalid Bag ID: $bagId") }
             .toBagResponse()
     }
 
-    fun addItemToBag(requestBody: BagController.AddToBagRequest): BagResponse {
+    fun addItemToBag(bagId: String, requestBody: BagController.AddToBagRequest): BagResponse {
+
         val product = productsRepository.findByItemId(requestBody.productId).getOrElse {
             throw ProductNotFoundException(requestBody.productId)
         }
@@ -76,8 +86,14 @@ class BagService(
             price = bagItemPrice
         )
 
-        bagRepository.save(productToInsert)
-        return bagRepository.findAll().toBagResponse()
+        val updatedBag = getBagOrThrow(bagId).also { bag ->
+            bag.copy(
+                items = bag.items + productToInsert
+            )
+        }
+
+        bagRepository.save(updatedBag)
+        return getBagOrThrow(bagId).toBagResponse()
     }
 
     fun deleteBagItem(itemId: String): BagResponse {
@@ -85,8 +101,9 @@ class BagService(
         return bagRepository.findAll().toBagResponse()
     }
 
-    fun patchBagItem(itemId: String, quantity: Int): BagResponse {
-        val itemToUpdate = bagRepository.findById(ObjectId(itemId)).get()
+    fun patchBagItem(bagId: String, itemId: String, quantity: Int): BagResponse {
+        val itemToUpdate = bagRepository.findById(ObjectId(itemId))
+            .getOrElse { throw IllegalArgumentException("Invalid Item ID: $itemId") }
 //            ?: return ResponseEntity TODO: Handle error with Either pattern
 //                .status(HttpStatus.NOT_FOUND)
 //                .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Failed to retrieve item"))

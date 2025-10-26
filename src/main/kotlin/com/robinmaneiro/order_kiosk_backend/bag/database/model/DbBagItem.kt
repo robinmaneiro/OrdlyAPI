@@ -5,7 +5,12 @@ import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document("bag_items")
+@Document("bags")
+data class DbBag(
+    val bagId: ObjectId,
+    val items: List<DbBagItem>
+)
+
 data class DbBagItem(
     @Id val id: ObjectId = ObjectId.get(),
     val productId: String,
