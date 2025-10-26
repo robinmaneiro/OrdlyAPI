@@ -67,8 +67,8 @@ class GuestService(
     fun getGuestDetails(): GuestDetailsResponse {
         val guestDetailsResponse =
             GuestDetailsResponse( //TODO: Change random assignation for creation in the database and subsequent retrieval of IDs
-                bagId = UUID.randomUUID().toString(),
-                wishlistId = UUID.randomUUID().toString()
+                guestBagId = UUID.randomUUID().toString(),
+                guestWishlistId = UUID.randomUUID().toString()
             )
         return guestDetailsResponse
     }
