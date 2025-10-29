@@ -52,16 +52,21 @@ class BagController(
     }
 
     @DeleteMapping("/{bagId}/{itemId}")
-    fun deleteBagItem(@PathVariable itemId: String): ResponseEntity<Any> {
-        val response = bagService.deleteBagItem(itemId)
+    fun deleteBagItem(
+        @PathVariable bagId: String,
+        @PathVariable itemId: String
+    ): ResponseEntity<Any> {
+        val response = bagService.deleteBagItem(bagId, itemId)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(response)
     }
 
     @DeleteMapping("/{bagId}/all")
-    fun deleteAllBagItems(): ResponseEntity<Any> {
-        val response = bagService.deleteAllBagItems() //It should return in an empty response
+    fun deleteAllBagItems(
+        @PathVariable bagId: String
+    ): ResponseEntity<Any> {
+        val response = bagService.deleteAllBagItems(bagId) //It should return in an empty response
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(response)

@@ -48,7 +48,7 @@ class BagService(
     }
 
     private fun getBagOrThrow(bagId: String): DbBag {
-        return bagRepository.findById(ObjectId(bagId)).getOrElse {
+        return bagRepository.getBagByBagId(bagId).getOrElse {
             throw IllegalArgumentException("Invalid Bag ID: $bagId")
         }
     }
@@ -96,34 +96,55 @@ class BagService(
         return getBagOrThrow(bagId).toBagResponse()
     }
 
-    fun deleteBagItem(itemId: String): BagResponse {
-        bagRepository.deleteById(ObjectId(itemId))
-        return bagRepository.findAll().toBagResponse()
+    fun deleteBagItem(bagId: String, itemId: String): BagResponse {
+        val bag = getBagOrThrow(bagId)
+
+        if (bag.items.none { it.id == ObjectId(itemId) }) {
+            throw IllegalArgumentException("Invalid item id: $itemId")
+        }
+
+        val updatedBag = bag.also { bag ->
+            bag.copy(
+                items = bag.items.filterNot { it.id == ObjectId(itemId) }
+            )
+        }
+
+        bagRepository.save(updatedBag)
+        return getBagOrThrow(bagId).toBagResponse()
     }
 
     fun patchBagItem(bagId: String, itemId: String, quantity: Int): BagResponse {
-        val itemToUpdate = bagRepository.findById(ObjectId(itemId))
-            .getOrElse { throw IllegalArgumentException("Invalid Item ID: $itemId") }
-//            ?: return ResponseEntity TODO: Handle error with Either pattern
-//                .status(HttpStatus.NOT_FOUND)
-//                .body(ErrorResponse(HttpStatus.NOT_FOUND.value(), "Failed to retrieve item"))
+        if (getBagOrThrow(bagId).items.none { it.id.toHexString() == itemId }) {
+           throw IllegalArgumentException("Invalid Item ID: $itemId")
+        }
 
-        val updatedTotalPrice = PriceData(
-            withTax = itemToUpdate.price.unit.withTax.times(quantity),
-            withoutTax = itemToUpdate.price.unit.withoutTax.times(quantity)
-        )
 
-        val updatedItem = itemToUpdate.copy(
-            quantity = quantity,
-            price = itemToUpdate.price.copy(total = updatedTotalPrice)
-        )
-        bagRepository.save(updatedItem)
+        val updatedItems = getBagOrThrow(bagId).items.map { itemToUpdate ->
+            return@map if (itemToUpdate.id.toHexString() == itemId) {
+                val updatedTotalPrice = PriceData(
+                    withTax = itemToUpdate.price.unit.withTax.times(quantity),
+                    withoutTax = itemToUpdate.price.unit.withoutTax.times(quantity)
+                )
 
-        return bagRepository.findAll().toBagResponse()
+                itemToUpdate.copy(
+                    quantity = quantity,
+                    price = itemToUpdate.price.copy(total = updatedTotalPrice)
+                )
+            } else {
+                itemToUpdate
+            }
+        }
+
+
+        bagRepository.save(getBagOrThrow(bagId).copy(items = updatedItems))
+
+        return getBagOrThrow(bagId).toBagResponse()
     }
 
-    fun deleteAllBagItems(): BagResponse {
-        bagRepository.deleteAll()
-        return bagRepository.findAll().toBagResponse()
+    fun deleteAllBagItems(bagId: String): BagResponse {
+        val bag = getBagOrThrow(bagId)
+        val updatedBag = bag.copy(items = emptyList())
+        bagRepository.save(updatedBag)
+        return getBagOrThrow(bagId).toBagResponse()
     }
 }
