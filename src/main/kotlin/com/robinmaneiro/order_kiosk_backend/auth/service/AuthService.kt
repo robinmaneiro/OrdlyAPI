@@ -44,6 +44,8 @@ class AuthService(
                 lastName = registrationBody.lastName,
                 email = registrationBody.email,
                 hashedPassword = hashEncoder.encode(registrationBody.password),
+                dateOfBirth = "14-07-1990",
+                phone = "777777777"
             )
         )
 
