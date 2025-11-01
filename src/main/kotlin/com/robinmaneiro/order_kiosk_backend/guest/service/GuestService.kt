@@ -2,7 +2,9 @@ package com.robinmaneiro.order_kiosk_backend.guest.service
 
 import com.robinmaneiro.order_kiosk_backend.auth.service.AuthService.TokenPair
 import com.robinmaneiro.order_kiosk_backend.database.model.GuestSession
+import com.robinmaneiro.order_kiosk_backend.database.model.RefreshGuestSession
 import com.robinmaneiro.order_kiosk_backend.database.repository.GuestSessionRepository
+import com.robinmaneiro.order_kiosk_backend.database.repository.RefreshGuestSessionRepository
 import com.robinmaneiro.order_kiosk_backend.guest.service.model.GuestDetailsResponse
 import com.robinmaneiro.order_kiosk_backend.security.model.TokenClaims
 import com.robinmaneiro.order_kiosk_backend.security.model.Variant
@@ -12,13 +14,16 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import java.security.MessageDigest
+import java.time.Instant
 import java.util.*
 import kotlin.jvm.optionals.getOrElse
 
 @Service
 class GuestService(
     private val jwtService: JwtService,
-    private val guestSessionRepository: GuestSessionRepository
+    private val guestSessionRepository: GuestSessionRepository,
+    private val refreshGuestSessionRepository: RefreshGuestSessionRepository
 ) {
     fun createGuestSession(): TokenPair {
         val guestUser = ObjectId.get()
@@ -27,8 +32,9 @@ class GuestService(
         val refreshToken =
             jwtService.generateRefreshToken(TokenClaims("guest-${guestUser.toHexString()}", Variant.Guest.RefreshToken))
 
-        // save user in the database
-        // assign bag id and wishlist id
+        // save refresh token
+
+        storeRefreshToken(guestUser, refreshToken)
 
         val guestSession = GuestSession(
             id = guestUser,
@@ -42,6 +48,26 @@ class GuestService(
             accessToken = accessToken,
             refreshToken = refreshToken
         )
+    }
+
+    private fun storeRefreshToken(userId: ObjectId, rawRefreshToken: String) {
+        val hashed = hashToken(rawRefreshToken)
+        val expiryMs = jwtService.refreshTokenValidityMs
+        val expiresAt = Instant.now().plusMillis(expiryMs)
+
+        refreshGuestSessionRepository.save(
+            RefreshGuestSession(
+                userId = userId,
+                expiresAt = expiresAt,
+                hashedToken = hashed
+            )
+        )
+    }
+
+    private fun hashToken(token: String): String { // TODO: Move this to an object or something to remove a duplication with the same method in AuthService
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hashBytes = digest.digest(token.encodeToByteArray())
+        return Base64.getEncoder().encodeToString(hashBytes)
     }
 
     @Transactional
