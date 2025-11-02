@@ -8,5 +8,4 @@ import java.util.Optional
 
 interface BagRepository : MongoRepository<DbBag, ObjectId> {
     // Nothing extra to add
-    fun getBagByBagId(bagId: String): Optional<DbBag>
 }

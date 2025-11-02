@@ -37,7 +37,7 @@ class GuestService(
         storeRefreshToken(guestUser, refreshToken)
 
         val bagId = ObjectId.get()
-        bagService.createBag(bagId.toHexString())
+        bagService.createBag(bagId)
 
         // TODO: Create guest wishlist.
 

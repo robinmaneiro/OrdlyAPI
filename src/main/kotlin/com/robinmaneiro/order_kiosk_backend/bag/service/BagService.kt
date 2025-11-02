@@ -13,7 +13,6 @@ import com.robinmaneiro.order_kiosk_backend.util.errorhandling.ProductNotFoundEx
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class BagService(
@@ -48,15 +47,15 @@ class BagService(
     }
 
     private fun getBagOrThrow(bagId: String): DbBag {
-        return bagRepository.getBagByBagId(bagId).getOrElse {
+        return bagRepository.findById(ObjectId(bagId)).getOrElse {
             throw IllegalArgumentException("Invalid Bag ID: $bagId")
         }
     }
 
-    fun createBag(bagId: String) { //TODO: Change for ObjectId?
+    fun createBag(bagId: ObjectId) { //TODO: Change for ObjectId?
         bagRepository.save(
             DbBag(
-                bagId = bagId,
+                id = bagId,
                 items = emptyList()
             )
         )
@@ -93,9 +92,9 @@ class BagService(
             price = bagItemPrice
         )
 
-        val updatedBag = getBagOrThrow(bagId).also { bag ->
-            bag.copy(
-                items = bag.items + productToInsert
+        val updatedBag = getBagOrThrow(bagId).run {
+            copy(
+                items = items + productToInsert
             )
         }
 
@@ -110,11 +109,9 @@ class BagService(
             throw IllegalArgumentException("Invalid item id: $itemId")
         }
 
-        val updatedBag = bag.also { bag ->
-            bag.copy(
+        val updatedBag = bag.copy(
                 items = bag.items.filterNot { it.id == ObjectId(itemId) }
             )
-        }
 
         bagRepository.save(updatedBag)
         return getBagOrThrow(bagId).toBagResponse()

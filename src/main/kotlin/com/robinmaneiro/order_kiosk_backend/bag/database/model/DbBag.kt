@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("bags")
 data class DbBag(
-    val bagId: String,
+    val id: ObjectId,
     val items: List<DbBagItem>
 )
 
