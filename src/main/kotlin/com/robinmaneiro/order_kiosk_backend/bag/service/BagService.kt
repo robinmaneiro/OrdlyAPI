@@ -52,7 +52,7 @@ class BagService(
         }
     }
 
-    fun createBag(bagId: ObjectId) { //TODO: Change for ObjectId?
+    fun createBag(bagId: ObjectId) {
         bagRepository.save(
             DbBag(
                 id = bagId,
