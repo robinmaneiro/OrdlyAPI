@@ -53,10 +53,17 @@ class BagService(
         }
     }
 
+    fun createBag(bagId: String) { //TODO: Change for ObjectId?
+        bagRepository.save(
+            DbBag(
+                bagId = bagId,
+                items = emptyList()
+            )
+        )
+    }
+
     fun fetchBag(bagId: String): BagResponse {
-        return bagRepository
-            .findById(ObjectId(bagId))
-            .getOrElse { throw IllegalArgumentException("Invalid Bag ID: $bagId") }
+        return getBagOrThrow(bagId)
             .toBagResponse()
     }
 

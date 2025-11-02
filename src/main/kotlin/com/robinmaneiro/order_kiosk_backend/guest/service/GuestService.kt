@@ -1,6 +1,7 @@
 package com.robinmaneiro.order_kiosk_backend.guest.service
 
 import com.robinmaneiro.order_kiosk_backend.auth.service.AuthService.TokenPair
+import com.robinmaneiro.order_kiosk_backend.bag.service.BagService
 import com.robinmaneiro.order_kiosk_backend.database.model.GuestSession
 import com.robinmaneiro.order_kiosk_backend.database.model.RefreshGuestSession
 import com.robinmaneiro.order_kiosk_backend.database.repository.GuestSessionRepository
@@ -22,6 +23,7 @@ import kotlin.jvm.optionals.getOrElse
 @Service
 class GuestService(
     private val jwtService: JwtService,
+    private val bagService: BagService,
     private val guestSessionRepository: GuestSessionRepository,
     private val refreshGuestSessionRepository: RefreshGuestSessionRepository
 ) {
@@ -32,13 +34,16 @@ class GuestService(
         val refreshToken =
             jwtService.generateRefreshToken(TokenClaims("guest-${guestUser.toHexString()}", Variant.Guest.RefreshToken))
 
-        // save refresh token
-
         storeRefreshToken(guestUser, refreshToken)
+
+        val bagId = ObjectId.get()
+        bagService.createBag(bagId.toHexString())
+
+        // TODO: Create guest wishlist.
 
         val guestSession = GuestSession(
             id = guestUser,
-            bagId = ObjectId.get(),
+            bagId = bagId,
             wishlistId = ObjectId.get()
         )
 
