@@ -2,6 +2,7 @@ package com.robinmaneiro.order_kiosk_backend.auth.service
 
 import com.robinmaneiro.order_kiosk_backend.auth.controller.AuthController
 import com.robinmaneiro.order_kiosk_backend.auth.service.model.RegistrationResponse
+import com.robinmaneiro.order_kiosk_backend.bag.service.BagService
 import com.robinmaneiro.order_kiosk_backend.database.model.RefreshToken
 import com.robinmaneiro.order_kiosk_backend.database.model.User
 import com.robinmaneiro.order_kiosk_backend.database.repository.RefreshTokenRepository
@@ -23,6 +24,7 @@ import java.util.Base64
 @Service
 class AuthService(
     private val jwtService: JwtService,
+    private val bagService: BagService,
     private val userRepository: UserRepository,
     private val hashEncoder: HashEncoder,
     private val refreshTokenRepository: RefreshTokenRepository
@@ -37,6 +39,10 @@ class AuthService(
         if (user != null) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "A user with this email already exists")
         }
+
+        val bagId = ObjectId.get()
+        val wishlistId = ObjectId.get()
+
         val savedUser =  userRepository.save(
             User(
                 title = registrationBody.title,
@@ -45,9 +51,13 @@ class AuthService(
                 email = registrationBody.email,
                 hashedPassword = hashEncoder.encode(registrationBody.password),
                 dateOfBirth = "14-07-1990",
-                phone = "777777777"
+                phone = "777777777",
+                bagId = bagId,
+                wishlistId = wishlistId
             )
         )
+
+        bagService.createBag(bagId)
 
         return RegistrationResponse(
             savedUser.id.toHexString()

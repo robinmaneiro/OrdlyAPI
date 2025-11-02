@@ -14,6 +14,6 @@ data class User(
     val hashedPassword: String,
     val dateOfBirth: String,
     val phone: String,
-    val bagId: ObjectId = ObjectId(),
-    val wishlistId: ObjectId = ObjectId()
+    val bagId: ObjectId,
+    val wishlistId: ObjectId
 )
