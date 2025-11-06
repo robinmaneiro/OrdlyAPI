@@ -10,6 +10,7 @@ import com.robinmaneiro.order_kiosk_backend.bag.service.model.ItemPrice
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.PriceData
 import com.robinmaneiro.order_kiosk_backend.menu.database.MenuProductsRepository
 import com.robinmaneiro.order_kiosk_backend.util.errorhandling.ProductNotFoundException
+import kotlinx.coroutines.flow.merge
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse
@@ -150,5 +151,32 @@ class BagService(
         val updatedBag = bag.copy(items = emptyList())
         bagRepository.save(updatedBag)
         return getBagOrThrow(bagId).toBagResponse()
+    }
+
+    fun mergeBags(sourceBagId: String, targetBagId: String): BagResponse {
+        val sourceBag = getBagOrThrow(sourceBagId)
+        val targetBag = getBagOrThrow(targetBagId)
+        val mergedMap = mutableMapOf<String, DbBagItem>()
+
+        sourceBag.items.forEach { product ->
+            mergedMap[product.productId] = product
+        }
+
+        targetBag.items.forEach { product ->
+            val existingProduct = mergedMap[product.productId]
+
+            if (existingProduct != null) { // Product exists, combine quantities.
+                mergedMap[product.productId] = existingProduct.copy(
+                    quantity = existingProduct.quantity + product.quantity
+                )
+            } else {
+                mergedMap[product.productId] = product
+            }
+        }
+
+        val mergedBag = targetBag.copy(items = mergedMap.values.toList())
+        bagRepository.save(mergedBag)
+
+        return mergedBag.toBagResponse()
     }
 }

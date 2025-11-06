@@ -71,4 +71,15 @@ class BagController(
             .status(HttpStatus.OK)
             .body(response)
     }
+
+    @GetMapping("/{sourceBagId}/merge/{targetBagId}")
+    fun mergeBags(
+        @PathVariable sourceBagId: String,
+        @PathVariable targetBagId: String
+    ): ResponseEntity<Any> {
+        val response = bagService.mergeBags(sourceBagId, targetBagId)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(response)
+    }
 }
