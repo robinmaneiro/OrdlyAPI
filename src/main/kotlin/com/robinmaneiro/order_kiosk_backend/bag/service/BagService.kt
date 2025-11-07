@@ -10,7 +10,6 @@ import com.robinmaneiro.order_kiosk_backend.bag.service.model.ItemPrice
 import com.robinmaneiro.order_kiosk_backend.bag.service.model.PriceData
 import com.robinmaneiro.order_kiosk_backend.menu.database.MenuProductsRepository
 import com.robinmaneiro.order_kiosk_backend.util.errorhandling.ProductNotFoundException
-import kotlinx.coroutines.flow.merge
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse
@@ -176,6 +175,8 @@ class BagService(
 
         val mergedBag = targetBag.copy(items = mergedMap.values.toList())
         bagRepository.save(mergedBag)
+
+        // TODO: In the future, remove the guest bag when successful - leaving it for now we have a reference.
 
         return mergedBag.toBagResponse()
     }
