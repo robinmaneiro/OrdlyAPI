@@ -1,7 +1,10 @@
 package com.robinmaneiro.order_kiosk_backend.bag.service.model
 
+import java.time.Instant
+
 
 data class BagResponse(
+    val createdAt: Instant,
     val totalCost: PriceData,
     val itemCount: Int,
     val items: List<BagItem>

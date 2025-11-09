@@ -12,6 +12,7 @@ import com.robinmaneiro.order_kiosk_backend.menu.database.MenuProductsRepository
 import com.robinmaneiro.order_kiosk_backend.util.errorhandling.ProductNotFoundException
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
+import java.time.Instant
 import kotlin.jvm.optionals.getOrElse
 
 @Service
@@ -42,6 +43,7 @@ class BagService(
         return BagResponse(
             totalCost = totalCost,
             itemCount = itemCount,
+            createdAt = createdAt,
             items = items
         )
     }
@@ -52,10 +54,12 @@ class BagService(
         }
     }
 
-    fun createBag(bagId: ObjectId) {
+    fun createBag(bagId: ObjectId, bagType: String) {
         bagRepository.save(
             DbBag(
                 id = bagId,
+                bagType = bagType,
+                createdAt = Instant.now(),
                 items = emptyList()
             )
         )
@@ -110,8 +114,8 @@ class BagService(
         }
 
         val updatedBag = bag.copy(
-                items = bag.items.filterNot { it.id == ObjectId(itemId) }
-            )
+            items = bag.items.filterNot { it.id == ObjectId(itemId) }
+        )
 
         bagRepository.save(updatedBag)
         return getBagOrThrow(bagId).toBagResponse()
@@ -119,7 +123,7 @@ class BagService(
 
     fun patchBagItem(bagId: String, itemId: String, quantity: Int): BagResponse {
         if (getBagOrThrow(bagId).items.none { it.id.toHexString() == itemId }) {
-           throw IllegalArgumentException("Invalid Item ID: $itemId")
+            throw IllegalArgumentException("Invalid Item ID: $itemId")
         }
 
 

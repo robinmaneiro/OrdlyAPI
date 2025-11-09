@@ -57,7 +57,7 @@ class AuthService(
             )
         )
 
-        bagService.createBag(bagId)
+        bagService.createBag(bagId, "Auth")
 
         return RegistrationResponse(
             savedUser.id.toHexString()
