@@ -23,8 +23,6 @@ class AccountController(
         // TODO: Add validation after this
         val userId = jwtService.getUserIdFromToken(authorizationHeader.removePrefix("Bearer "))
 
-
-
         return accountService.getAccountDetails(userId)
     }
 }

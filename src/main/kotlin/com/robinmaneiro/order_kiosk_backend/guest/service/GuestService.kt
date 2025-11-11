@@ -116,7 +116,7 @@ class GuestService(
             throw Exception()
         }
 
-        return GuestDetailsResponse( //TODO: Change random assignation for creation in the database and subsequent retrieval of IDs
+        return GuestDetailsResponse(
             guestBagId = guestSession.bagId.toHexString(),
             guestWishlistId = guestSession.wishlistId.toHexString()
         )
