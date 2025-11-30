@@ -13,6 +13,7 @@ import com.robinmaneiro.order_kiosk_backend.security.model.Variant
 import com.robinmaneiro.order_kiosk_backend.security.token.JwtService
 import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -117,6 +118,21 @@ class AuthService(
             accessToken = newAccessToken,
             refreshToken = newRefreshToken
         )
+    }
+
+    fun logout(accessToken: String): ResponseEntity<Boolean> {
+        val userId = jwtService.getUserIdFromToken(accessToken)
+        val user = userRepository.findById(ObjectId(userId)).orElseThrow {
+            throw ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "Invalid refresh token."
+            )
+        }
+
+        val hashed = hashToken(accessToken)
+
+        refreshTokenRepository.deleteByUserIdAndHashedToken(user.id, hashed)
+        return ResponseEntity.status(HttpStatus.OK).body(true)
     }
 
     private fun storeRefreshToken(userId: ObjectId, rawRefreshToken: String) {
