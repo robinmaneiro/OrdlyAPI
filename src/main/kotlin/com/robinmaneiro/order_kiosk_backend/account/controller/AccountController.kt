@@ -2,12 +2,10 @@ package com.robinmaneiro.order_kiosk_backend.account.controller
 
 import com.robinmaneiro.order_kiosk_backend.account.service.AccountService
 import com.robinmaneiro.order_kiosk_backend.account.service.model.AccountDetailsResponse
-import com.robinmaneiro.order_kiosk_backend.database.model.User
 import com.robinmaneiro.order_kiosk_backend.security.token.JwtService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.RequestBody
