@@ -29,7 +29,8 @@ class BagService(
                 quantity = dbBagItem.quantity,
                 title = dbBagItem.title,
                 description = dbBagItem.description,
-                price = dbBagItem.price
+                price = dbBagItem.price,
+                imageUrl = dbBagItem.imageUrl
             )
         }
 
@@ -93,7 +94,8 @@ class BagService(
             quantity = requestBody.quantity,
             title = product.title,
             description = product.description,
-            price = bagItemPrice
+            price = bagItemPrice,
+            imageUrl = product.imageUrl
         )
 
         val updatedBag = getBagOrThrow(bagId).run {

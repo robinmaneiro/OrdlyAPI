@@ -16,7 +16,8 @@ data class BagItem(
     val quantity: Int,
     val title: String,
     val description: String,
-    val price: ItemPrice
+    val price: ItemPrice,
+    val imageUrl: String? = null
 )
 
 data class ItemPrice(
