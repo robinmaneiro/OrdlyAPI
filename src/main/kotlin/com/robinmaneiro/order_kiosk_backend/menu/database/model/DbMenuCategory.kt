@@ -8,5 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class DbMenuCategory(
     @Id val id: ObjectId = ObjectId.get(),
     val categoryName: String,
-    val isDefault: Boolean = false
+    val isDefault: Boolean = false,
+    val imageUrl: String? = null
 )

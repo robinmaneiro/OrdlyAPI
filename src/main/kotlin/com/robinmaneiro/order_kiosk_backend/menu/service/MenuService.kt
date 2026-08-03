@@ -23,14 +23,16 @@ class MenuService(
                 withTax = price,
                 withoutTax = price
             ),
-            categories = categories)
+            categories = categories,
+            imageUrl = imageUrl)
 
     fun fetchAllMenuCategories(): List<MenuCategory> {
         return menuCategoriesRepository.findAll().map {
             MenuCategory(
                 id = it.id.toHexString(),
                 categoryName = it.categoryName,
-                isSelected = it.isDefault
+                isSelected = it.isDefault,
+                imageUrl = it.imageUrl
             )
         }
     }

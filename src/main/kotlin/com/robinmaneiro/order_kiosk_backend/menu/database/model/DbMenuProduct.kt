@@ -11,5 +11,6 @@ data class DbMenuProduct(
     val title: String,
     val description: String,
     val price: Int,
-    val categories: List<String>
+    val categories: List<String>,
+    val imageUrl: String? = null
 )

@@ -7,7 +7,8 @@ data class MenuSingleProductResponse(
     val title: String,
     val description: String,
     val price: PriceData,
-    val categories: List<String>
+    val categories: List<String>,
+    val imageUrl: String? = null
 )
 
 data class PriceData(
