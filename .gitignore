@@ -6,6 +6,9 @@ build/
 local.properties
 *.env
 .env
+
+### macOS ###
+.DS_Store
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
