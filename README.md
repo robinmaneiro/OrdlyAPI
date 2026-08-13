@@ -1,6 +1,6 @@
-# Order Kiosk Backend
+# Ordly API
 
-REST API for the Order Kiosk app. Serves the menu, manages baskets, and handles auth for both guests and registered users. Built with Spring Boot and Kotlin.
+REST API for the Ordly app. Serves the menu, manages baskets, and handles auth for both guests and registered users. Built with Spring Boot and Kotlin.
 
 ## Architecture
 
