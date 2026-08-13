@@ -1,1 +1,1 @@
-rootProject.name = "order_kiosk_backend"
+rootProject.name = "ordly-api"

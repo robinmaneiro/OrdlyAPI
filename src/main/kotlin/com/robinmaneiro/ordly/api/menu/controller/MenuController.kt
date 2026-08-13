@@ -1,0 +1,38 @@
+package com.robinmaneiro.ordly.api.menu.controller
+
+import com.robinmaneiro.ordly.api.menu.service.MenuService
+import com.robinmaneiro.ordly.api.menu.service.model.MenuCategory
+import com.robinmaneiro.ordly.api.menu.service.model.MenuProductsResponse
+import com.robinmaneiro.ordly.api.menu.service.model.MenuSingleProductResponse
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+@RequestMapping("/api/v1/menu")
+class MenuController(
+    private val menuService: MenuService
+) {
+
+    @GetMapping("/categories")
+    fun fetchAllMenuCategories(): List<MenuCategory> {
+        return menuService.fetchAllMenuCategories()
+    }
+
+    @GetMapping("/categories/{categoryId}")
+    fun fetchProductsByCategory(@PathVariable categoryId: String): MenuProductsResponse {
+        return menuService.fetchProductsByCategory(categoryId)
+    }
+
+    @GetMapping("/items/all")
+    fun fetchAllMenuProducts(): MenuProductsResponse {
+        return menuService.fetchAllMenuProducts()
+    }
+
+    @GetMapping("/items/{productId}")
+    fun fetchMenuProduct(@PathVariable productId: String): MenuSingleProductResponse? {
+        return menuService.fetchMenuProduct(productId)
+    }
+}
